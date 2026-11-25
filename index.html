@@ -1,0 +1,95 @@
+<!doctype html>
+<!-- Adapted from Echoezy's Apache-2.0 Christmas tree. See licenses/. -->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="robots" content="noindex">
+    <meta name="description" content="用手势点亮圣诞树，绽放烟花，再展开自己的相册。">
+    <meta property="og:title" content="手势圣诞树">
+    <meta property="og:description" content="比出 3、2、1、0，点亮圣诞树。">
+    <title>手势圣诞树</title>
+    <link rel="stylesheet" href="./scene.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./shared/three/build/three.module.js",
+                "three/addons/": "./shared/three/examples/jsm/",
+                "@mediapipe/tasks-vision": "./shared/mediapipe/vision_bundle.js"
+            }
+        }
+    </script>
+</head>
+<body class="starlight molecule">
+    <section id="system-loader" class="fullscreen-overlay" aria-labelledby="launch-title">
+        <h1 id="launch-title">手势圣诞树</h1>
+        <p class="loader-text" id="sys-status" role="status">正在加载页面…</p>
+        <button id="init-btn" type="button" class="action-btn" disabled>开启手势识别</button>
+    </section>
+
+    <section id="setup-screen" class="fullscreen-overlay" aria-labelledby="setup-title" hidden>
+        <div class="setup-container">
+            <h2 id="setup-title">圣诞场景设置</h2>
+            <div class="setup-group">
+                <label class="setup-label" for="greeting-input">顶部标题</label>
+                <input type="text" id="greeting-input" class="setup-input" placeholder="输入顶部标题" value="Merry Christmas" maxlength="25">
+            </div>
+            <div class="setup-group">
+                <label class="setup-label" for="recipient-input">祝福给谁</label>
+                <input type="text" id="recipient-input" class="setup-input" placeholder="对方的名字" maxlength="18">
+                <label class="setup-label" for="wish-input">祝福正文</label>
+                <input type="text" id="wish-input" class="setup-input" value="圣诞节快乐" maxlength="36">
+            </div>
+            <div id="molecule-album-home" class="setup-group">
+                <div id="molecule-photo-picker">
+                    <label class="setup-label molecule-album-label" for="molecule-file-input">相册照片</label>
+                    <button type="button" id="molecule-add-photos">添加照片</button>
+                    <input type="file" id="molecule-file-input" multiple accept="image/*" hidden>
+                    <ul id="molecule-file-list" aria-label="已选照片" hidden></ul>
+                    <p id="molecule-file-status" role="status">选择相册中的图片，可分多次添加。</p>
+                </div>
+            </div>
+            <div class="setup-group">
+                <label class="setup-label" for="music-input">背景音乐（可选）</label>
+                <button type="button" class="file-btn" id="music-btn">选择音乐</button>
+                <input type="file" id="music-input" accept="audio/*" hidden>
+            </div>
+            <button type="button" class="action-btn" id="start-magic">进入圣诞场景</button>
+            <p id="setup-status" class="loader-text" role="status" hidden></p>
+        </div>
+    </section>
+
+    <div id="canvas-container" aria-hidden="true"></div>
+    <canvas id="fireworks-canvas" aria-hidden="true"></canvas>
+    <div id="ui-layer"><h1 id="main-title">Merry Christmas</h1></div>
+    <div id="molecule-ignite" aria-hidden="true"></div>
+    <div id="molecule-dimmer" aria-hidden="true"></div>
+    <div id="starlight-story" hidden>
+        <div id="starlight-caption" aria-live="polite">
+            <b id="starlight-count" hidden></b>
+            <div id="starlight-wish" hidden><strong></strong><span></span></div>
+        </div>
+        <div id="starlight-photo"><img alt="祝福相册当前照片" hidden></div>
+    </div>
+
+    <video id="webcam" autoplay muted playsinline aria-hidden="true"></video>
+    <aside id="gesture-panel" aria-label="手势识别" hidden>
+        <canvas id="webcam-preview" width="224" height="168" aria-label="镜像摄像头及手部关键点" hidden></canvas>
+        <p id="gesture-status" role="status">请将整只手放入镜头。</p>
+        <p id="gesture-instructions">三指或 OK、二指、一指、握拳。</p>
+        <div id="gesture-actions">
+            <button id="camera-preview-toggle" type="button" aria-controls="webcam-preview" aria-expanded="false" disabled>隐藏摄像头画面</button>
+            <button id="gesture-toggle" type="button">关闭手势识别</button>
+            <button id="molecule-album-launch" type="button" aria-haspopup="dialog">照片 · 0</button>
+        </div>
+    </aside>
+    <dialog id="molecule-album-dialog" aria-labelledby="molecule-album-title">
+        <header>
+            <h2 id="molecule-album-title">相册照片</h2>
+            <form method="dialog"><button type="submit">完成</button></form>
+        </header>
+        <div id="molecule-album-body"></div>
+    </dialog>
+    <script type="module" src="./app.js"></script>
+</body>
+</html>
